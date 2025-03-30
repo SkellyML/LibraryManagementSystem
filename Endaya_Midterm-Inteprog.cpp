@@ -190,16 +190,13 @@ private:
     }
 
     bool getBookID(string& id, const string& prompt) {
-        int attempts = 5;
-        while(attempts--) {
-            cout << prompt;
-            getline(cin, id);
-            id = trimSpaces(id);
-            if(findBook(id) != -1) return true;
-            if(attempts > 0) cout << "Book not found! " << attempts << " attempts left\n";
-        }
-        cout << "Returning to menu...\n";
-        waitForEnter();
+        cout << prompt;
+        getline(cin, id);
+        id = trimSpaces(id);
+        if(findBook(id) != -1) return true;
+        
+        cout << "Book not found!\nPress any key to continue...";
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
         return false;
     }
 
