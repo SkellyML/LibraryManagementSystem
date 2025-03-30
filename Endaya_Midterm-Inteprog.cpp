@@ -38,7 +38,8 @@ private:
 public:
     void setID(const string& id, Book* books, int count) {
         string newID = trimSpaces(id);
-        while(true) {
+        bool valid = false;
+        while(!valid) {
             if(newID.empty()) {
                 cout << "ID cannot be empty: ";
                 getline(cin, newID);
@@ -64,14 +65,15 @@ public:
                 newID = trimSpaces(newID);
             } else {
                 ID = newID;
-                break;
+                valid = true;
             }
         }
     }
 
     void setISBN(const string& isbn) {
         string newISBN = trimSpaces(isbn);
-        while(true) {
+        bool valid = false;
+        while(!valid) {
             if(newISBN.empty()) {
                 cout << "ISBN cannot be empty: ";
                 getline(cin, newISBN);
@@ -80,11 +82,12 @@ public:
             }
             if(isValidISBN(newISBN)) {
                 ISBN = newISBN;
-                break;
+                valid = true;
+            } else {
+                cout << "Invalid ISBN! Must be 10/13 digits (no leading dash): ";
+                getline(cin, newISBN);
+                newISBN = trimSpaces(newISBN);
             }
-            cout << "Invalid ISBN! Must be 10/13 digits (no leading dash): ";
-            getline(cin, newISBN);
-            newISBN = trimSpaces(newISBN);
         }
     }
 
@@ -130,7 +133,8 @@ public:
 
     void setCategory(const string& category) {
         string newCat = trimSpaces(category);
-        while(true) {
+        bool valid = false;
+        while(!valid) {
             if(newCat.empty()) {
                 cout << "Category cannot be empty: ";
                 getline(cin, newCat);
@@ -141,11 +145,12 @@ public:
             for(char c : newCat) lower += tolower(c);
             if(lower == "fiction" || lower == "non-fiction" || lower == "nonfiction") {
                 Category = (lower == "fiction") ? "Fiction" : "Non-fiction";
-                break;
+                valid = true;
+            } else {
+                cout << "Category not found! Enter Fiction/Non-fiction: ";
+                getline(cin, newCat);
+                newCat = trimSpaces(newCat);
             }
-            cout << "Category not found! Enter Fiction/Non-fiction: ";
-            getline(cin, newCat);
-            newCat = trimSpaces(newCat);
         }
     }
 
@@ -210,8 +215,9 @@ public:
 
         Book newBook;
         string input;
+        bool categoryValid = false;
 
-        while(true) {
+        while(!categoryValid) {
             cout << "Enter category (Fiction/Non-fiction): ";
             getline(cin, input);
             input = trimSpaces(input);
@@ -219,9 +225,10 @@ public:
             for(char c : input) lower += tolower(c);
             if(lower == "fiction" || lower == "non-fiction" || lower == "nonfiction") {
                 newBook.setCategory(input);
-                break;
+                categoryValid = true;
+            } else {
+                cout << "Category not found!\n";
             }
-            cout << "Category not found!\n";
         }
 
         cout << "Enter book ID: ";
@@ -352,7 +359,8 @@ public:
         }
 
         string category;
-        while(true) {
+        bool categoryValid = false;
+        while(!categoryValid) {
             cout << "Enter category (Fiction/Non-fiction): ";
             getline(cin, category);
             category = trimSpaces(category);
@@ -369,9 +377,10 @@ public:
                     }
                 }
                 if(!found) cout << "No books in this category.\n";
-                break;
+                categoryValid = true;
+            } else {
+                cout << "Category not found!\n";
             }
-            cout << "Category not found!\n";
         }
         waitForEnter();
     }
@@ -395,7 +404,8 @@ void showMenu() {
     Library lib;
     string choice;
 
-    while(true) {
+    bool running = true;
+    while(running) {
         system("cls || clear");
         cout << "---------------------------------------------\n"
              << "LIBRARY MANAGEMENT SYSTEM\n"
@@ -422,7 +432,7 @@ void showMenu() {
             case '4': lib.deleteBook(); break;
             case '5': lib.viewByCategory(); break;
             case '6': lib.viewAllBooks(); break;
-            case '7': return;
+            case '7': running = false; break;
             default: continue;
         }
     }
